@@ -10,8 +10,8 @@
 </head>
 <body>
     
-    <a href="{{ route('topics.index') }}"><h1 style="background:orange;color:white;text-align:center;">簡易掲示板</h1></a>
+    <a href="{{ route('topics.index') }}"><h1 style="background:orange;color:white;text-align:center;">質問したいことを投稿</h1></a>
     <main class="container">@yield("main")</main>
-
+    
 </body>
 </html>

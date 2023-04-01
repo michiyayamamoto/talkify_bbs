@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Topic;
+use App\Models\Comment;
 use App\Http\Requests\CreateTopicRequest;
 
 class TopicsController extends Controller
@@ -50,16 +51,17 @@ class TopicsController extends Controller
      */
     public function show($id)
     {
-        $context            = []; 
-        $context["topics"]  = Topic::where("id",$id)->get();
-
-        #HACK:↑と↓は等価。
-        #contextに仕込むモデルオブジェクトが増えるたび、context定義時の行数が増えるので、混乱を防ぐために↑のやり方のほうが良いかもしれない。
-        /*            
-        $topics     = Topic::where("id",$id)->get();
-        $context    = [ "topics" => $topics ];
-        */
-        return view("show",$context);
+        $topic      = Topic::where("id",$id)->first();
+        #ここでコメントされている内容を抜き取る
+        $comments   = Comment::where("topic_id",$id)->orderBy("created_at","desc")->get();
+        $context    = [ "topic" => $topic,
+                    "comments" => $comments];
+    return view("show",$context);
+    
+        // ↓は過去verトピックのみ表示
+        // $context            = []; 
+        // $context["topics"]  = Topic::where("id",$id)->get();
+        // return view("show",$context);
     }
 
     /**
@@ -121,4 +123,23 @@ class TopicsController extends Controller
 
         return redirect(route("topics.index"));
     }
+    public function comment(CreateTopicRequest $request, $id)
+    {
+        Comment::create(array_merge( $request->all(), ["topic_id"=>$id] ));
+        #↑と↓は等価
+    
+        /*
+        $comment  = new Comment;
+
+        $comment->name      = $request->name;
+        $comment->content   = $request->content;
+        $comment->topic_id  = $id;
+        $comment->save();
+        */
+        \Log::debug("投稿完了");
+    
+        return redirect(route("topics.show",$id));
+    }
+    
+    
 }
