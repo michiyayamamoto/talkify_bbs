@@ -40,6 +40,7 @@ use App\Models\Comment;
 
 // 以下コメント投稿用
 
+Route::get('/',[TopicsController::class, 'index'])->name('topics.index');
 Route::get('/topics',[TopicsController::class, 'index'])->name('topics.index');
 Route::get('/topics/create',[TopicsController::class, 'create'])->name('topics.create');
 Route::post('/topics',[TopicsController::class, 'store'])->name('topics.store');
